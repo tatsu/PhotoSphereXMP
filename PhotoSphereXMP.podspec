@@ -7,7 +7,7 @@ A Swift Parser for Photo Sphere XMP metadata that is serialized and embedded ins
                    DESC
   s.homepage     = "https://github.com/tatsu/PhotoSphereXMP"
   s.license      = "MIT"
-  s.author       = { "Tatsuhiko Arai" => "email@address.com" }
+  s.author       = { "Tatsuhiko Arai" => "tatsu@tatsu.com" }
 
   s.ios.deployment_target = "9.0"
 
