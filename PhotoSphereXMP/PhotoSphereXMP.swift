@@ -10,33 +10,33 @@ import Foundation
 
 open class PhotoSphereXMP: NSObject, XMLParserDelegate {
 
-    public enum GPanoElement: String {
-        case UsePanoramaViewer            = "GPano:UsePanoramaViewer"
-        case CaptureSoftware              = "GPano:CaptureSoftware"
-        case StitchingSoftware            = "GPano:StitchingSoftware"
-        case ProjectionType               = "GPano:ProjectionType"
-        case PoseHeadingDegrees           = "GPano:PoseHeadingDegrees"
-        case PosePitchDegrees             = "GPano:PosePitchDegrees"
-        case PoseRollDegrees              = "GPano:PoseRollDegrees"
-        case InitialViewHeadingDegrees    = "GPano:InitialViewHeadingDegrees"
-        case InitialViewPitchDegrees      = "GPano:InitialViewPitchDegrees"
-        case InitialViewRollDegrees       = "GPano:InitialViewRollDegrees"
-        case InitialHorizontalFOVDegrees  = "GPano:InitialHorizontalFOVDegrees"
-        case FirstPhotoDate               = "GPano:FirstPhotoDate"
-        case LastPhotoDate                = "GPano:LastPhotoDate"
-        case SourcePhotosCount            = "GPano:SourcePhotosCount"
-        case ExposureLockUsed             = "GPano:ExposureLockUsed"
-        case CroppedAreaImageWidthPixels  = "GPano:CroppedAreaImageWidthPixels"
-        case CroppedAreaImageHeightPixels = "GPano:CroppedAreaImageHeightPixels"
-        case FullPanoWidthPixels          = "GPano:FullPanoWidthPixels"
-        case FullPanoHeightPixels         = "GPano:FullPanoHeightPixels"
-        case CroppedAreaLeftPixels        = "GPano:CroppedAreaLeftPixels"
-        case CroppedAreaTopPixels         = "GPano:CroppedAreaTopPixels"
-        case InitialCameraDolly           = "GPano:InitialCameraDolly"
+    public enum GPano: String {
+        case usePanoramaViewer            = "GPano:UsePanoramaViewer"
+        case captureSoftware              = "GPano:CaptureSoftware"
+        case stitchingSoftware            = "GPano:StitchingSoftware"
+        case projectionType               = "GPano:ProjectionType"
+        case poseHeadingDegrees           = "GPano:PoseHeadingDegrees"
+        case posePitchDegrees             = "GPano:PosePitchDegrees"
+        case poseRollDegrees              = "GPano:PoseRollDegrees"
+        case initialViewHeadingDegrees    = "GPano:InitialViewHeadingDegrees"
+        case initialViewPitchDegrees      = "GPano:InitialViewPitchDegrees"
+        case initialViewRollDegrees       = "GPano:InitialViewRollDegrees"
+        case initialHorizontalFOVDegrees  = "GPano:InitialHorizontalFOVDegrees"
+        case firstPhotoDate               = "GPano:FirstPhotoDate"
+        case lastPhotoDate                = "GPano:LastPhotoDate"
+        case sourcePhotosCount            = "GPano:SourcePhotosCount"
+        case exposureLockUsed             = "GPano:ExposureLockUsed"
+        case croppedAreaImageWidthPixels  = "GPano:CroppedAreaImageWidthPixels"
+        case croppedAreaImageHeightPixels = "GPano:CroppedAreaImageHeightPixels"
+        case fullPanoWidthPixels          = "GPano:FullPanoWidthPixels"
+        case fullPanoHeightPixels         = "GPano:FullPanoHeightPixels"
+        case croppedAreaLeftPixels        = "GPano:CroppedAreaLeftPixels"
+        case croppedAreaTopPixels         = "GPano:CroppedAreaTopPixels"
+        case initialCameraDolly           = "GPano:InitialCameraDolly"
     }
 
     let parser: XMPParser
-    var completionHandler: (([GPanoElement: Any]?, Error?) -> Void)!
+    var completionHandler: (([GPano: Any]?, Error?) -> Void)!
 
     public init?(contentsOf url: URL) {
         guard let parser = XMPParser(contentsOf: url) else {
@@ -58,15 +58,15 @@ open class PhotoSphereXMP: NSObject, XMLParserDelegate {
         parser.delegate = self
     }
 
-    open func parse(completionHandler: @escaping (([GPanoElement: Any]?, Error?) -> Void)) {
+    open func parse(completionHandler: @escaping (([GPano: Any]?, Error?) -> Void)) {
         self.completionHandler = completionHandler
         parser.parse()
     }
 
     // MARK: - XMLParserDelegate methods
 
-    var elements: [GPanoElement: Any]!
-    var parsingElement: GPanoElement?
+    var elements: [GPano: Any]!
+    var parsingElement: GPano?
     var foundHandler: ((String) -> Void)!
 
     public func parserDidStartDocument(_ parser: XMLParser) {
@@ -90,61 +90,44 @@ open class PhotoSphereXMP: NSObject, XMLParserDelegate {
     }
 
     public func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
-        parsingElement = GPanoElement(rawValue: elementName)
+        parsingElement = GPano(rawValue: elementName)
         if let element = parsingElement {
             switch element {
             // Boolean
-            case .UsePanoramaViewer:
-                fallthrough
-            case .ExposureLockUsed:
+            case .usePanoramaViewer:            fallthrough
+            case .exposureLockUsed:
                 foundHandler = { self.elements[element] = $0 == "True" ? true : false }
 
             // String
-            case .CaptureSoftware:
-                fallthrough
-            case .StitchingSoftware:
-                fallthrough
-            case .ProjectionType:
+            case .captureSoftware:              fallthrough
+            case .stitchingSoftware:            fallthrough
+            case .projectionType:
                 foundHandler = { self.elements[element] = $0 }
 
             // Real
-            case .PoseHeadingDegrees:
-                fallthrough
-            case .PosePitchDegrees:
-                fallthrough
-            case .PoseRollDegrees:
-                fallthrough
-            case .InitialHorizontalFOVDegrees:
-                fallthrough
-            case .InitialCameraDolly:
+            case .poseHeadingDegrees:           fallthrough
+            case .posePitchDegrees:             fallthrough
+            case .poseRollDegrees:              fallthrough
+            case .initialHorizontalFOVDegrees:  fallthrough
+            case .initialCameraDolly:
                 foundHandler = { self.elements[element] = Double($0) ?? 0.0 }
 
             // Integer
-            case .InitialViewHeadingDegrees:
-                fallthrough
-            case .InitialViewPitchDegrees:
-                fallthrough
-            case .InitialViewRollDegrees:
-                fallthrough
-            case .SourcePhotosCount:
-                fallthrough
-            case .CroppedAreaImageWidthPixels:
-                fallthrough
-            case .CroppedAreaImageHeightPixels:
-                fallthrough
-            case .FullPanoWidthPixels:
-                fallthrough
-            case .FullPanoHeightPixels:
-                fallthrough
-            case .CroppedAreaLeftPixels:
-                fallthrough
-            case .CroppedAreaTopPixels:
+            case .initialViewHeadingDegrees:    fallthrough
+            case .initialViewPitchDegrees:      fallthrough
+            case .initialViewRollDegrees:       fallthrough
+            case .sourcePhotosCount:            fallthrough
+            case .croppedAreaImageWidthPixels:  fallthrough
+            case .croppedAreaImageHeightPixels: fallthrough
+            case .fullPanoWidthPixels:          fallthrough
+            case .fullPanoHeightPixels:         fallthrough
+            case .croppedAreaLeftPixels:        fallthrough
+            case .croppedAreaTopPixels:
                 foundHandler = { self.elements[element] = Int($0) ?? 0 }
 
             // Date
-            case .FirstPhotoDate:
-                fallthrough
-            case .LastPhotoDate:
+            case .firstPhotoDate:               fallthrough
+            case .lastPhotoDate:
                 foundHandler = { string in
                     let formatter = DateFormatter()
                     formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
