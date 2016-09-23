@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "PhotoSphereXMP"
-  s.version      = "0.9.1"
+  s.version      = "1.0.0"
   s.summary      = "Photo Sphere XMP Parser in Swift"
   s.description  = <<-DESC
 A Swift Parser for Photo Sphere XMP metadata that is serialized and embedded inside the photo sphere as described by the Adobe XMP standard.
