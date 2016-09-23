@@ -15,15 +15,16 @@ Swift 3.0+ (Xcode 8.0+)
 $ gem install cocoapods
 ```
 
+> At the time of writing, --pre option is a must for Xcode 8.
+
 To integrate PhotoSphereXMP into your Xcode project using CocoaPods, specify it in your `Podfile`:
 
 ```ruby
-source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '9.0'
 use_frameworks!
 
 target '<Your Target Name>' do
-  pod 'PhotoSphereXMP', '~> 0.9.0'
+  pod 'PhotoSphereXMP', '~> 1.0.0'
 end
 ```
 
@@ -47,12 +48,14 @@ $ brew install carthage
 To integrate PhotoSphereXMP into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "tatsu/PhotoSphereXMP" ~> 0.9.0
+github "tatsu/PhotoSphereXMP" ~> 1.0.0
 ```
 
 Run `carthage update` to build the framework and drag the built `PhotoSphereXMP.framework` into your Xcode project.
 
 ## Usage
+
+### Sample code
 
 ```swift
 import PhotoSphereXMP
@@ -64,10 +67,38 @@ import PhotoSphereXMP
     let xmp = PhotoSphereXMP(data: data)
 
     // Parse the content
-    xmp.parse { (elements: [PhotoSphereXMP.GPanoElement: Any]?, error: Error?) -> Void in
+    xmp.parse { (elements: [PhotoSphereXMP.GPano: Any]?, error: Error?) -> Void in
       // Check error and do something with the metadata dictionary
     }
 ```
+
+### Metadata properties
+
+| Name | Type | GPano enum case name | Swift type |
+|------|------|-----------------|------------|
+|GPano:UsePanoramaViewer|Boolean|usePanoramaViewer|Bool|
+|GPano:CaptureSoftware|String|captureSoftware|String|
+|GPano:StitchingSoftware|String|stitchingSoftware|String|
+|GPano:ProjectionType|Open Choice of Text|projectionType|String|
+|GPano:PoseHeadingDegrees|Real|poseHeadingDegrees|Double|
+|GPano:PosePitchDegrees|Real|posePitchDegrees|Double|
+|GPano:PoseRollDegrees|Real|poseRollDegrees|Double|
+|GPano:InitialViewHeadingDegrees|Integer|initialViewHeadingDegrees|Int|
+|GPano:InitialViewPitchDegrees|Integer|initialViewPitchDegrees|Int|
+|GPano:InitialViewRollDegrees|Integer|initialViewRollDegrees|Int|
+|GPano:InitialHorizontalFOVDegrees|Real|initialHorizontalFOVDegrees|Double|
+|GPano:FirstPhotoDate|Date|firstPhotoDate|Date|
+|GPano:LastPhotoDate|Date|lastPhotoDate|Date|
+|GPano:SourcePhotosCount|Integer|sourcePhotosCount|Int|
+|GPano:ExposureLockUsed|Boolean|exposureLockUsed|Bool|
+|GPano:CroppedAreaImageWidthPixels|Integer|croppedAreaImageWidthPixels|Int|
+|GPano:CroppedAreaImageHeightPixels|Integer|croppedAreaImageHeightPixels|Int|
+|GPano:FullPanoWidthPixels|Integer|fullPanoWidthPixels|Int|
+|GPano:FullPanoHeightPixels|Integer|fullPanoHeightPixels|Int|
+|GPano:CroppedAreaLeftPixels|Integer|croppedAreaLeftPixels|Int|
+|GPano:CroppedAreaTopPixels|Integer|croppedAreaTopPixels|Int|
+|GPano:InitialCameraDolly|Real|initialCameraDolly|Double|
+
 
 ## References
 * [Photo Sphere XMP Metadata](https://developers.google.com/streetview/spherical-metadata)
